@@ -2,26 +2,31 @@ local Passes = 0
 local Fails = 0
 local Results = {}
 local function PrintResults()
-	print("\n")
-	print("Custom UNC Environment Check")
-	print("✅ - Pass, ⛔ - Fail")
+	local Output = "\n----- Custom UNC Environment Check ----- \n✅ - Pass, ⛔ - Fail"
 	for i, v in ipairs(Results) do
-		print(v)
+		Output = Output.. "\n".. v
 	end
 	local rate = math.round(Passes / (Passes + Fails) * 100)
 	local outOf = Passes .. " out of " .. (Passes + Fails)
-	print("\n")
-	print("UNC Summary")
-	print("✅ Tested with a " .. rate .. "% success rate (" .. outOf .. ")")
-	print("⛔ " .. Fails .. " tests failed")
+	Output = Output.. "\nUNC Summary \n✅ Tested with a " .. rate .. "% success rate (" .. outOf .. ") \n⛔ " .. Fails .. " tests failed"
+	print(Output)
+	print("Completed UNC Enviroment Check --")
+	if not game.StarterGui:GetCore("DevConsoleVisible") then
+		game:FindService("StarterGui"):SetCore("SendNotification", {
+			Title = "Custom UNC Enviroment Check",
+			Text =  "Press F9 or type /Console in the chat to view results.",
+			Icon = "rbxassetid://0000000000",
+			Duration = 3
+		})
+	end
 end
 
 local function Test(Name, Res)
 	if Res then
-		table.insert(Results, ("✅ ".. Name))
+		table.insert(Results, ("  ✅ ".. Name))
 		Passes = Passes + 1
 	else
-		table.insert(Results, ("⛔ ".. Name))
+		table.insert(Results, ("  ⛔ ".. Name))
 		Fails = Fails + 1
 	end
 end
@@ -29,7 +34,7 @@ end
 ----- TESTS -----
 
 -- CLOSURES --
-table.insert(Results, "-- Closures --")
+table.insert(Results, "\n-- Closures --")
 
 Test("loadstring", pcall(function()
 	loadstring("_G.TESTING = true")()
@@ -37,14 +42,14 @@ Test("loadstring", pcall(function()
 end))
 
 -- INSTANCES --
-table.insert(Results, "-- Instances --")
+table.insert(Results, "\n-- Instances --")
 
 Test("getinstances", pcall(function()
 	return getinstances()
 end))
 
 -- MISC --
-table.insert(Results, "-- Misc --")
+table.insert(Results, "\n-- Misc --")
 
 Test("identifyexecutor", pcall(function()
 	return identifyexecutor()
@@ -54,7 +59,7 @@ Test("getexecutorname", pcall(function()
 end))
 
 -- SCRIPTS --
-table.insert(Results, "-- Scripts --")
+table.insert(Results, "\n-- Scripts --")
 
 Test("getgenv", pcall(function()
 	getgenv().TESTING = true
@@ -70,7 +75,7 @@ Test("getscripts", pcall(function()
 end))
 
 -- UNCATEGORISED --
-table.insert(Results, "-- Uncategorised --")
+table.insert(Results, "\n-- Uncategorised --")
 
 Test("httpget", pcall(function()
 	return game:HttpGet("https://google.com")
