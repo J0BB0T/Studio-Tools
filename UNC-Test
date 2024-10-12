@@ -1,0 +1,51 @@
+local Passes = 0
+local Fails = 0
+local Results = {}
+local function PrintResults()
+	print("\n")
+	print("UNC Environment Check")
+	print("✅ - Pass, ⛔ - Fail")
+	for i, v in ipairs(Results) do
+		print(v)
+	end
+	local rate = math.round(Passes / (Passes + Fails) * 100)
+	local outOf = Passes .. " out of " .. (Passes + Fails)
+	print("\n")
+	print("UNC Summary")
+	print("✅ Tested with a " .. rate .. "% success rate (" .. outOf .. ")")
+	print("⛔ " .. Fails .. " tests failed")
+end
+local function Test(Name, Res)
+	if Res then
+		table.insert(Results, ("✅ ".. Name))
+		Passes += 1
+	else
+		table.insert(Results, ("⛔ ".. Name))
+		Fails += 1
+	end
+end
+Test("getgenv", pcall(function()
+	getgenv().TESTING = true
+	return getgenv().TESTING
+end))
+Test("loadstring", pcall(function()
+	loadstring("_G.TESTING = true")
+	return _G.TESTING
+end))
+Test("getexecutorname", pcall(function()
+	return getexecutorname()
+end))
+Test("identifyexecutor", pcall(function()
+	return identifyexecutor()
+end))
+Test("getscripts", pcall(function()
+	return getscripts()
+end))
+Test("getrunningscripts", pcall(function()
+	return getrunningscripts()
+end))
+Test("httpget", pcall(function()
+	game:GetService('ReplicatedStorage').ST.HttpGet:InvokeServer("https://google.com")
+end))
+
+task.spawn(PrintResults)
