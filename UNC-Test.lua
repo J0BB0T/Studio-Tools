@@ -8,7 +8,7 @@ local function PrintResults()
 	end
 	local rate = math.round(Passes / (Passes + Fails) * 100)
 	local outOf = Passes .. " out of " .. (Passes + Fails)
-	Output = Output.. "\nUNC Summary \n✅ Tested with a " .. rate .. "% success rate (" .. outOf .. ") \n⛔ " .. Fails .. " tests failed"
+	Output = Output.. "\n\nUNC Summary \n✅ Tested with a " .. rate .. "% success rate (" .. outOf .. ") \n⛔ " .. Fails .. " tests failed"
 	print(Output)
 	print("Completed UNC Enviroment Check --")
 	if not game.StarterGui:GetCore("DevConsoleVisible") then
