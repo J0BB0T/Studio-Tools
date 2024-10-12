@@ -18,10 +18,10 @@ end
 local function Test(Name, Res)
 	if Res then
 		table.insert(Results, ("✅ ".. Name))
-		Passes += 1
+		Passes = Passes + 1
 	else
 		table.insert(Results, ("⛔ ".. Name))
-		Fails += 1
+		Fails = Fails + 1
 	end
 end
 Test("getgenv", pcall(function()
@@ -29,7 +29,7 @@ Test("getgenv", pcall(function()
 	return getgenv().TESTING
 end))
 Test("loadstring", pcall(function()
-	loadstring("_G.TESTING = true")
+	loadstring("_G.TESTING = true")()
 	return _G.TESTING
 end))
 Test("getexecutorname", pcall(function()
@@ -45,7 +45,7 @@ Test("getrunningscripts", pcall(function()
 	return getrunningscripts()
 end))
 Test("httpget", pcall(function()
-	game:HttpGet("https://google.com")
+	return game:HttpGet("https://google.com")
 end))
 
 task.spawn(PrintResults)
