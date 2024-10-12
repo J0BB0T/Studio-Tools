@@ -3,7 +3,7 @@ local Fails = 0
 local Results = {}
 local function PrintResults()
 	print("\n")
-	print("UNC Environment Check")
+	print("Custom UNC Environment Check")
 	print("✅ - Pass, ⛔ - Fail")
 	for i, v in ipairs(Results) do
 		print(v)
@@ -15,6 +15,7 @@ local function PrintResults()
 	print("✅ Tested with a " .. rate .. "% success rate (" .. outOf .. ")")
 	print("⛔ " .. Fails .. " tests failed")
 end
+
 local function Test(Name, Res)
 	if Res then
 		table.insert(Results, ("✅ ".. Name))
@@ -24,27 +25,48 @@ local function Test(Name, Res)
 		Fails = Fails + 1
 	end
 end
-Test("getgenv", pcall(function()
-	getgenv().TESTING = true
-	return getgenv().TESTING
-end))
+
+----- TESTS -----
+
+-- CLOSURES --
+table.insert(Results, "-- Closures --")
 Test("loadstring", pcall(function()
 	loadstring("_G.TESTING = true")()
 	return _G.TESTING
 end))
-Test("getexecutorname", pcall(function()
-	return getexecutorname()
+
+-- INSTANCES --
+table.insert(Results, "-- Instances --")
+Test("getinstances", pcall(function()
+	return getinstances()
 end))
+
+-- MISC --
+table.insert(Results, "-- Misc --")
 Test("identifyexecutor", pcall(function()
 	return identifyexecutor()
 end))
-Test("getscripts", pcall(function()
-	return getscripts()
+Test("getexecutorname", pcall(function()
+	return getexecutorname()
+end))
+
+-- SCRIPTS --
+table.insert(Results, "-- Scripts --")
+Test("getgenv", pcall(function()
+	getgenv().TESTING = true
+	return getgenv().TESTING
 end))
 Test("getrunningscripts", pcall(function()
 	return getrunningscripts()
 end))
+Test("getscripts", pcall(function()
+	return getscripts()
+end))
+
+-- UNCATEGORISED --
+table.insert(Results, "-- Uncategorised --")
 Test("httpget", pcall(function()
 	return game:HttpGet("https://google.com")
 end))
+
 PrintResults()
