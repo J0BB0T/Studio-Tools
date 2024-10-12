@@ -45,7 +45,7 @@ Test("getrunningscripts", pcall(function()
 	return getrunningscripts()
 end))
 Test("httpget", pcall(function()
-	game:GetService('ReplicatedStorage').ST.HttpGet:InvokeServer("https://google.com")
+	game:HttpGet("https://google.com")
 end))
 
 task.spawn(PrintResults)
