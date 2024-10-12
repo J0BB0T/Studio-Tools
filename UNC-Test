@@ -47,5 +47,4 @@ end))
 Test("httpget", pcall(function()
 	return game:HttpGet("https://google.com")
 end))
-
-task.spawn(PrintResults)
+PrintResults()
