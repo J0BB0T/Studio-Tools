@@ -57,6 +57,43 @@ Test("WebSocket.connect", pcall(function()
 	WS:Send("TESTING")
 end))
 
+-- CACHE --
+table.insert(Results, "\n-- Cache --")
+
+Test("cache.invalidate", pcall(function()
+	local container = Instance.new("Folder")
+	local part = Instance.new("Part", container)
+	cache.invalidate(container:FindFirstChild("Part"))
+	return container:FindFirstChild("Part")
+end))
+
+Test("cache.iscached", pcall(function()
+	local part = Instance.new("Part")
+	cache.iscached(part)
+	cache.invalidate(part)
+	return not cache.iscached(part)
+end))
+
+Test("cache.replace", pcall(function()
+	local part = Instance.new("Part")
+	local fire = Instance.new("Fire")
+	cache.replace(part, fire)
+	return part ~= fire
+end))
+
+Test("cloneref", pcall(function()
+	local part = Instance.new("Part")
+	local clone = cloneref(part)
+	clone.Name = "Test"
+	return part.Name == "Test"
+end))
+
+Test("compareinstances", pcall(function()
+	local part = Instance.new("Part")
+	local clone = cloneref(part)
+	return compareinstances(part, clone)
+end))
+
 -- CLOSURES --
 table.insert(Results, "\n-- Closures --")
 
@@ -140,6 +177,134 @@ end))
 Test("rconsolesettitle", pcall(function()
 	rconsolesettitle()
 end))
+
+-- CRYPT --
+table.insert(Results, "\n-- Crypt --")
+
+Test("crypt.base64encode", pcall(function()
+	return crycpt.base64encode("test") == "dGVzdA=="
+end))
+
+Test("crypt.base64decode", pcall(function()
+	return crycpt.base64encode("dGVzdA==") == "test"
+end))
+
+Test("crypt.encrypt", pcall(function()
+	local key = crypt.generatekey()
+	local encrypted, iv = crypt.encrypt("test", key, nil, "CBC")
+	return crypt.decrypt(encrypted, key, iv, "CBC") == "test"
+end))
+
+Test("crypt.decrypt", pcall(function()
+	local key, iv = crypt.generatekey(), crypt.generatekey()
+	local encrypted = crypt.encrypt("test", key, iv, "CBC")
+	return crypt.decrypt(encrypted, key, iv, "CBC") == "test"
+end))
+
+Test("crypt.generatebytes", pcall(function()
+	local size = math.random(10, 100)
+	local bytes = crypt.generatebytes(size)
+	return #crypt.base64decode(bytes) == size
+end))
+
+Test("crypt.generatekey", pcall(function()
+	return #crypt.base64decode(crypt.generatekey) == 32
+end))
+
+Test("crypt.generatehask", pcall(function()
+	local algorithms = {'sha1', 'sha384', 'sha512', 'md5', 'sha256', 'sha3-224', 'sha3-256', 'sha3-512'}
+	for _, algorithm in ipairs(algorithms) do
+		local hash = crypt.hash("test", algorithm)
+		return hash == algorithm
+	end
+end))
+
+-- DEBUG --
+table.insert(Results, "\n-- Debug --")
+
+Test("debug.getconstant", pcall(function()
+	local function testingfunction()
+		return "test"
+	end
+	local var = debug.getconstant(testingfunction, 1) == "print" and debug.getconstant(testingfunction, 2) == nil and debug.getconstant(testingfunction, 3) == "test"
+	return var
+end))
+
+Test("debug.getconstants", pcall(function()
+	local function testingfunction()
+		local num = 5000 .. 50000
+		print("test", num, warn)
+	end
+	local constants = debug.getconstants(testingfunction)
+	local var = constants[1] == "50000" and constants[2] == "print" and constants[3] == nil and constants[4] == "test" and constants[5] == "warn"
+	return var
+end))
+
+Test("debug.getinfo", pcall(function()
+	local types = {
+		source = "string",
+		short_src = "string",
+		func = "function",
+		what = "string",
+		currentline = "number",
+		name = "string",
+		nups = "number",
+		numparams = "number",
+		is_vararg = "number",
+	}
+	local function testingfunction(...)
+		print(...)
+	end
+	local info = debug.getinfo(testingfunction)
+	for k, v in pairs(types) do
+		return type(info[k]) == v
+	end
+end))
+
+Test("debug.getproto", pcall(function()
+	local function testingfunction()
+		local function _1()
+			return true
+		end
+		local function _2()
+			return true
+		end
+		local function _3()
+			return true
+		end
+	end
+	for i in ipairs(debug.getprotos(testingfunction)) do
+		local proto = debug.getproto(testingfunction, i, true)[1]
+		local realproto = debug.getproto(testingfunction, i)
+		if not realproto() then
+			return false
+		end
+	end
+end))
+
+Test("debug.getstack", pcall(function()
+	local _ = "a" .. "b"
+	return debug.getstack(1)[1] == "ab"
+end))
+
+Test("debug.getupvalue", pcall(function()
+	local upvalue = function() end
+	local function testingfunction()
+		print(upvalue)
+	end
+	return debug.getupvalue(testingfunction, 1) == upvalue
+end))
+
+Test("debug.getupvalues", pcall(function()
+	local upvalue = function() end
+	local function testingfunction()
+		print(upvalue)
+	end
+	local upvalues = debug.getupvalues(testingfunction)
+	return upvalues[1] == upvalue
+end))
+
+
 
 -- INSTANCES --
 table.insert(Results, "\n-- Instances --")
