@@ -30,6 +30,7 @@ end
 
 -- CLOSURES --
 table.insert(Results, "-- Closures --")
+
 Test("loadstring", pcall(function()
 	loadstring("_G.TESTING = true")()
 	return _G.TESTING
@@ -37,12 +38,14 @@ end))
 
 -- INSTANCES --
 table.insert(Results, "-- Instances --")
+
 Test("getinstances", pcall(function()
 	return getinstances()
 end))
 
 -- MISC --
 table.insert(Results, "-- Misc --")
+
 Test("identifyexecutor", pcall(function()
 	return identifyexecutor()
 end))
@@ -52,19 +55,23 @@ end))
 
 -- SCRIPTS --
 table.insert(Results, "-- Scripts --")
+
 Test("getgenv", pcall(function()
 	getgenv().TESTING = true
 	return getgenv().TESTING
 end))
+
 Test("getrunningscripts", pcall(function()
 	return getrunningscripts()
 end))
+
 Test("getscripts", pcall(function()
 	return getscripts()
 end))
 
 -- UNCATEGORISED --
 table.insert(Results, "-- Uncategorised --")
+
 Test("httpget", pcall(function()
 	return game:HttpGet("https://google.com")
 end))
