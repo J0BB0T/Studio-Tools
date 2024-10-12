@@ -33,12 +33,112 @@ end
 
 ----- TESTS -----
 
+-- DRAWING --
+table.insert(Results, "\n-- Drawing --")
+
+Test("Drawing.new", pcall(function()
+	return Drawing.new("Line")
+end))
+
+Test("Drawing.Fonts", pcall(function()
+	return Drawing.Fonts.UI == 0
+end))
+
+-- WEBSOCKET --
+table.insert(Results, "\n-- WebSocket --")
+
+Test("WebSocket.connect", pcall(function()
+	local WS = WebSocket.connect("ws://echo.websocket.events")
+	WS.OnMessage:Once(function(msg)
+		WS:Close()
+		return msg
+	end)
+	task.wait()
+	WS:Send("TESTING")
+end))
+
 -- CLOSURES --
 table.insert(Results, "\n-- Closures --")
+
+Test("checkcaller", pcall(function()
+	return (checkcaller() ~= nil)
+end))
+
+Test("clonefunction", pcall(function()
+	local function testingfunction()
+		return "Testing"
+	end
+	local clonedfunction = clonefuncion(testingfunction())
+	return clonedfunction == testingfunction()
+end))
+
+Test("getcallingscript", pcall(function()
+	return getcallingscript()
+end))
+
+Test("hookfunction", pcall(function()
+	local function testingfunction()
+		return false
+	end
+	local hooked = hookfunction(testingfunction, function()
+		return true
+	end)
+	return hooked()
+end))
+
+Test("iscclosure", pcall(function()
+	local var1 = iscclosure(print)
+	local var2 = iscclosure(function() end)
+	return (var1 and not var2)
+end))
+Test("islclosure", pcall(function()
+	local var1 = iscclosure(print)
+	local var2 = iscclosure(function() end)
+	return (var2 and not var1)
+end))
+
+Test("isexecutorclosure", pcall(function()
+	return isexecutorclosure(isexecutorclosure)
+end))
 
 Test("loadstring", pcall(function()
 	loadstring("_G.TESTING = true")()
 	return _G.TESTING
+end))
+
+Test("newcclosure", pcall(function()
+	local function testingfunction()
+		return true
+	end
+	local new = newcclosure(testingfunction)
+	return testingfunction() == new()
+end))
+
+-- CONSOLE --
+table.insert(Results, "\n-- Console --")
+
+Test("rconsoleclear", pcall(function()
+	rconsoleclear()
+end))
+
+Test("rconsolecreate", pcall(function()
+	rconsolecreate()
+end))
+
+Test("rconsoledestroy", pcall(function()
+	rconsoledestroy()
+end))
+
+Test("rconsoleinput", pcall(function()
+	rconsoleinput()
+end))
+
+Test("rconsoleprint", pcall(function()
+	rconsoleprint()
+end))
+
+Test("rconsolesettitle", pcall(function()
+	rconsolesettitle()
 end))
 
 -- INSTANCES --
@@ -53,9 +153,6 @@ table.insert(Results, "\n-- Misc --")
 
 Test("identifyexecutor", pcall(function()
 	return identifyexecutor()
-end))
-Test("getexecutorname", pcall(function()
-	return getexecutorname()
 end))
 
 -- SCRIPTS --
