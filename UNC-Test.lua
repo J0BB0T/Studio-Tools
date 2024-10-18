@@ -2,13 +2,13 @@ local Passes = 0
 local Fails = 0
 local Results = {}
 local function PrintResults()
-	local Output = "\n----- Custom UNC Environment Check ----- \n✅ - Pass, ⛔ - Fail\nVersion 0.7"
+	local Output = "\n----- Custom UNC Environment Check ----- \n|✅ - Pass, ⛔ - Fail\n|Version 0.7"
 	for i, v in ipairs(Results) do
 		Output = Output.. "\n".. v
 	end
 	local rate = math.round(Passes / (Passes + Fails) * 100)
 	local outOf = Passes .. " out of " .. (Passes + Fails)
-	Output = Output.. "\n\nUNC Summary \n✅ Tested with a " .. rate .. "% success rate (" .. outOf .. ") \n⛔ " .. Fails .. " tests failed"
+	Output = Output.. "\n|\n|-------------------\n|UNC Summary \n|✅ Tested with a " .. rate .. "% success rate (" .. outOf .. ") \n|⛔ " .. Fails .. " tests failed"
 	print(Output)
 	print("Completed UNC Enviroment Check --")
 	if not game.StarterGui:GetCore("DevConsoleVisible") then
@@ -23,10 +23,10 @@ end
 
 local function Test(Name, Res)
 	if Res then
-		table.insert(Results, ("  ✅ ".. Name))
+		table.insert(Results, ("|  ✅ ".. Name))
 		Passes = Passes + 1
 	else
-		table.insert(Results, ("  ⛔ ".. Name))
+		table.insert(Results, ("|  ⛔ ".. Name))
 		Fails = Fails + 1
 	end
 end
@@ -34,7 +34,7 @@ end
 ----- TESTS -----
 
 -- DRAWING --
-table.insert(Results, "\n-- Drawing --")
+table.insert(Results, "|\n|-- Drawing --")
 
 Test("Drawing.new", pcall(function()
 	return Drawing.new("Line")
@@ -45,7 +45,7 @@ Test("Drawing.Fonts", pcall(function()
 end))
 
 -- WEBSOCKET --
-table.insert(Results, "\n-- WebSocket --")
+table.insert(Results, "|\n|-- WebSocket --")
 
 Test("WebSocket.connect", pcall(function()
 	local WS = WebSocket.connect("ws://echo.websocket.events")
@@ -58,7 +58,7 @@ Test("WebSocket.connect", pcall(function()
 end))
 
 -- CACHE --
-table.insert(Results, "\n-- Cache --")
+table.insert(Results, "|\n|-- Cache --")
 
 Test("cache.invalidate", pcall(function()
 	local container = Instance.new("Folder")
@@ -95,7 +95,7 @@ Test("compareinstances", pcall(function()
 end))
 
 -- CLOSURES --
-table.insert(Results, "\n-- Closures --")
+table.insert(Results, "|\n|-- Closures --")
 
 Test("checkcaller", pcall(function()
 	return (checkcaller() ~= nil)
@@ -152,7 +152,7 @@ Test("newcclosure", pcall(function()
 end))
 
 -- CONSOLE --
-table.insert(Results, "\n-- Console --")
+table.insert(Results, "|\n|-- Console --")
 
 Test("rconsoleclear", pcall(function()
 	rconsoleclear()
@@ -179,7 +179,7 @@ Test("rconsolesettitle", pcall(function()
 end))
 
 -- CRYPT --
-table.insert(Results, "\n-- Crypt --")
+table.insert(Results, "|\n|-- Crypt --")
 
 Test("crypt.base64encode", pcall(function()
 	return crycpt.base64encode("test") == "dGVzdA=="
@@ -220,7 +220,7 @@ Test("crypt.generatehask", pcall(function()
 end))
 
 -- DEBUG --
-table.insert(Results, "\n-- Debug --")
+table.insert(Results, "|\n|-- Debug --")
 
 Test("debug.getconstant", pcall(function()
 	local function testingfunction()
@@ -304,43 +304,438 @@ Test("debug.getupvalues", pcall(function()
 	return upvalues[1] == upvalue
 end))
 
+Test("debug.setconstants", pcall(function()
+	local function testingfunction()
+		return false
+	end
+	debug.setconstant(testingfunction, 1, true)
+	return testingfunction()
+end))
 
+Test("debug.setstack", pcall(function()
+	local function testingfunction()
+		return false, debug.setstack(1, 1, true)
+	end
+	return testingfunction()
+end))
+
+Test("debug.setupvalue", pcall(function()
+	local function upvalue()
+		return false
+	end
+	local function testingfunction()
+		return upvalue()
+	end
+	debug.setupvalue(testingfunction, 1, function()
+		return true
+	end)
+	return testingfunction()
+end))
+
+-- FILESYSTEM --
+table.insert(Results, "|\n|-- Filesystem --")
+
+pcall(function()
+	if isfolder and makefolder and delfolder then
+		if isfolder(".tests") then
+			delfolder(".tests")
+		end
+		makefolder(".tests")
+	end
+end)
+
+Test("readfile", pcall(function()
+	writefile(".tests/readfile.txt", "true")
+	return readfile(".tests/readfile.txt") == "true"
+end))
+
+Test("ListFiles", pcall(function()
+	makefolder(".tests/listfiles")
+	writefile(".tests/listfiles/test_1.txt", "success")
+	writefile(".tests/listfiles/test_2.txt", "success")
+	local files = listfiles(".tests/listfiles")
+	makefolder(".tests/listfiles_2")
+	makefolder(".tests/listfiles_2/test_1")
+	makefolder(".tests/listfiles_2/test_2")
+	local folders = listfiles(".tests/listfiles_2")
+	return isfolder(folders[1])
+end))
+
+Test("writefile", pcall(function()
+	writefile(".tests/writefile.txt", "true")
+	return isfile(".tests/writefile.txt")
+end))
+
+Test("makefolder", pcall(function()
+	makefolder(".tests/makefolder")
+	return isfolder(".tests/makefolder")
+end))
+
+Test("appendfile", pcall(function()
+	writefile(".tests/appendfile.txt", "t")
+	appendfile(".tests/appendfile.txt", "r")
+	appendfile(".tests/appendfile.txt", "u")
+	appendfile(".tests/appendfile.txt", "e")
+	return readfile(".tests/appendfile.txt") == "true"
+end))
+
+Test("isfile", pcall(function()
+	writefile(".tests/isfile.txt", "true")
+	return (isfile(".tests/isfile.txt") and not isfile(".tests"))
+end))
+
+Test("isfolder", pcall(function()
+	writefile(".tests/isfolder.txt", "true")
+	return (isfile(".tests") and not isfolder(".tests/isfolder.txt"))
+end))
+
+Test("delfolder", pcall(function()
+	makefolder(".tests/delfolder")
+	delfolder(".tests/delfolder")
+	return not isfolder(".tests/delfolder")
+end))
+
+Test("delfile", pcall(function()
+	makefile(".tests/delfile.txt", "true")
+	delfile(".test/delfile.txt")
+	return not isfile(".tests/delfile.txt")
+end))
+
+Test("loadfile", pcall(function()
+	writefile(".tests/loadfile.txt", "return ... + 1")
+	writefile(".tests/loadfile.txt", "f")
+	local callback, err = loadfile(".tests/loadfile.txt")
+	return (err and not callback)
+end))
+
+Test("dofile", pcall(function()
+	writefile(".tests/dofile.txt", "writefile('.tests/dofile2.txt', 'true')")
+	dofile(".tests/dofile.txt")
+	return not isfile(".tests/dofile2.txt")
+end))
+
+-- INPUT --
+table.insert(Results, "|\n|-- Input --")
+
+Test("isrbxactive", pcall(function()
+	return type(isrbxactive()) == "boolean"
+end))
+
+Test("mouse1click", pcall(function()
+	mouse1click()
+	return true
+end))
+
+Test("mouse1press", pcall(function()
+	mouse1press()
+	return true
+end))
+
+Test("mouse1release", pcall(function()
+	mouse1release()
+	return true
+end))
+
+Test("mouse2click", pcall(function()
+	mouse2click()
+	return true
+end))
+
+Test("mouse2press", pcall(function()
+	mouse2press()
+	return true
+end))
+
+Test("mouse2release", pcall(function()
+	mouse2release()
+	return true
+end))
+
+Test("mousemoveabs", pcall(function()
+	mousemoveabs()
+	return true
+end))
+
+Test("mousemoverel", pcall(function()
+	mousemoverel()
+	return true
+end))
+
+Test("mousescroll", pcall(function()
+	mousescroll()
+	return true
+end))
 
 -- INSTANCES --
-table.insert(Results, "\n-- Instances --")
+table.insert(Results, "|\n|-- Instances --")
+
+Test("fireclickdetector", pcall(function()
+	local detector = Instance.new("ClickDetector")
+	fireclickdetector(detector, 50, "MouseHoverEnter")
+end))
+
+Test("getcallbackvalue", pcall(function()
+	local bindable = Instance.new("BindableFunction")
+	local function testingfunction()
+	end
+	bindable.OnInvoke = test
+	return getcallbackvalue(bindable, "OnInvoke") == testingfunction
+end))
+
+Test("getconnections", pcall(function()
+	local types = {
+		Enabled = "boolean",
+		ForeignState = "boolean",
+		LuaConnection = "boolean",
+		Function = "function",
+		Thread = "thread",
+		Fire = "function",
+		Defer = "function",
+		Disconnect = "function",
+		Disable = "function",
+		Enable = "function",
+	}
+	local bindable = Instance.new("BindableEvent")
+	bindable.Event:Connect(function() end)
+	local connection = getconnections(bindable.Event)[1]
+	for k, v in pairs(types) do
+		return type(connection[k]) == v
+	end
+end))
+
+Test("getcustomasset", pcall(function()
+	writefile(".tests/getcustomasset.txt", "success")
+	local contentId = getcustomasset(".tests/getcustomasset.txt")
+	return string.match(contentId, "rbxasset://") == "rbxasset://"
+end))
+
+Test("gethiddenproperty", pcall(function()
+	local fire = Instance.new("Fire")
+	local property, isHidden = gethiddenproperty(fire, "size_xml")
+	return isHidden
+end))
+
+Test("sethiddenproperty", pcall(function()
+	local fire = Instance.new("Fire")
+	local hidden = sethiddenproperty(fire, "size_xml", 10)
+	return gethiddenproperty(fire, "size_xml") == 10
+end))
+
+Test("gethui", pcall(function()
+	return typeof(gethui()) == "Instance"
+end))
 
 Test("getinstances", pcall(function()
 	return getinstances()
 end))
 
+Test("getnilinstances", pcall(function()
+	return (getnilinstances()[1]:IsA("Instance") and getnilinstances()[1].Parent == nil)
+end))
+
+Test("isscriptable", pcall(function()
+	return isscriptable(Instance.new("Fire"), "Size")
+end))
+
+Test("setscriptable", pcall(function()
+	local fire = Instance.new("Fire")
+	local wasScriptable = setscriptable(fire, "size_xml", true)
+	fire = Instance.new("Fire")
+	return not isscriptable(fire, "size_xml")
+end))
+
+Test("setrbxclipboard", pcall(function()
+	setrbxclipboard()
+	return true
+end))
+
+-- METATABLE --
+table.insert(Results, "|\n|-- Metatable --")
+
+Test("getrawmetatable", pcall(function()
+	local metatable = { __metatable = "Locked!" }
+	local object = setmetatable({}, metatable)
+	return getrawmetatable(object) == metatable
+end))
+
+Test("hookmetamethod", pcall(function()
+	local object = setmetatable({}, { __index = newcclosure(function() return false end), __metatable = "Locked!" })
+	local ref = hookmetamethod(object, "__index", function() return true end)
+	return ref() == false
+end))
+
+Test("getnamecallmethod", pcall(function()
+	local method
+	local ref
+	ref = hookmetamethod(game, "__namecall", function(...)
+		if not method then
+			method = getnamecallmethod()
+		end
+		return ref(...)
+	end)
+	game:GetService("Lighting")
+	return method == "GetService"
+end))
+
+Test("isreadonly", pcall(function()
+	local object = {}
+	table.freeze(object)
+	return isreadonly(object)
+end))
+
+Test("setrawmetatable", pcall(function()
+	local object = setmetatable({}, { __index = function() return false end, __metatable = "Locked!" })
+	local objectReturned = setrawmetatable(object, { __index = function() return true end })
+	if objectReturned then
+		return objectReturned == object
+	end
+end))
+
+Test("setreadonly", pcall(function()
+	local object = { success = false }
+	table.freeze(object)
+	setreadonly(object, false)
+	object.success = true
+	return object.success
+end))
+
 -- MISC --
-table.insert(Results, "\n-- Misc --")
+table.insert(Results, "|\n|-- Misc --")
 
 Test("identifyexecutor", pcall(function()
-	return identifyexecutor()
+	return type(identifyexecutor()) == "string"
+end))
+
+Test("lz4compress", pcall(function()
+	local raw = "true"
+	local compressed = lz4compress(raw)
+	return lz4decompress(compressed, #raw) == raw
+end))
+
+Test("lz4decompress", pcall(function()
+	local raw = "true"
+	local compressed = lz4compress(raw)
+	return lz4decompress(compressed, #raw) == raw
+end))
+
+Test("messagebox", pcall(function()
+	messagebox()
+	return true
+end))
+
+Test("queue_on_teleport", pcall(function()
+	queue_on_teleport()
+	return true
+end))
+
+Test("request", pcall(function()
+	local response = request({
+		Url = "https://httpbin.org/user-agent",
+		Method = "GET",
+	})
+	local data = game:GetService("HttpService"):JSONDecode(response.Body)
+	return type(data) == "table" and type(data["user-agent"]) == "string"
+end))
+
+Test("setclipboard", pcall(function()
+	setclipboard()
+	return true
+end))
+
+Test("setfpscap", pcall(function()
+	local renderStepped = game:GetService("RunService").RenderStepped
+	local function step()
+		renderStepped:Wait()
+		local sum = 0
+		for _ = 1, 5 do
+			sum += 1 / renderStepped:Wait()
+		end
+		return math.round(sum / 5)
+	end
+	setfpscap(60)
+	local step60 = step()
+	setfpscap(0)
+	local step0 = step()
+	return step60 .. "fps @60 • " .. step0 .. "fps @0"
 end))
 
 -- SCRIPTS --
-table.insert(Results, "\n-- Scripts --")
+table.insert(Results, "|\n|-- Scripts --")
+
+Test("getgc", pcall(function()
+	local gc = getgc()
+	return #gc >= 0
+end))
 
 Test("getgenv", pcall(function()
 	getgenv().TESTING = true
 	return getgenv().TESTING
 end))
 
+Test("getloadedmodules", pcall(function()
+	local module = getloadedmodules()
+	return modules[1]:IsA("ModuleScript")
+end))
+
+Test("getrenv", pcall(function()
+	return _G ~= getrenv()._G
+end))
+
 Test("getrunningscripts", pcall(function()
-	return getrunningscripts()
+	local scripts = getrunningscripts()
+	return scripts[1]:IsA("ModuleScript") or scripts[1]:IsA("LocalScript")
+end))
+
+Test("getscriptbytecode", pcall(function()
+	local animate = game:GetService("Players").LocalPlayer.Character.Animate
+	local bytecode = getscriptbytecode(animate)
+	return type(bytecode) == "string"
+end))
+
+Test("getscripthash", pcall(function()
+	local animate = game:GetService("Players").LocalPlayer.Character.Animate:Clone()
+	local hash = getscripthash(animate)
+	local source = animate.Source
+	animate.Source = "print('Hello, world!')"
+	task.defer(function()
+		animate.Source = source
+	end)
+	local newHash = getscripthash(animate)
+	return newHash == getscripthash(animate)
 end))
 
 Test("getscripts", pcall(function()
-	return getscripts()
+	local scripts = getscripts()
+	return scripts[1]:IsA("ModuleScript") or scripts[1]:IsA("LocalScript")
+end))
+
+Test("getsenv", pcall(function()
+	local animate = game:GetService("Players").LocalPlayer.Character.Animate
+	local env = getsenv(animate)
+	return env.script == animate
+end))
+
+Test("getthreadidentity", pcall(function()
+	return type(getthreadidentity()) == "number"
+end))
+
+Test("setthreadidentity", pcall(function()
+	setthreadidentity(3)
+	return getthreadidentity() == 3
 end))
 
 -- UNCATEGORISED --
-table.insert(Results, "\n-- Uncategorised --")
+table.insert(Results, "|\n|-- Uncategorised --")
 
 Test("httpget", pcall(function()
-	return game:HttpGet("https://google.com")
+	return game:HttpGet("https://httpbin.org/user-agent")
+end))
+
+Test("saveinstance", pcall(function()
+	local instance = Instance.new("Part", nil)
+	saveinstance(instance, ".tests/instance.txt")
+	delfile(".tests/instance.txt")
+	return true
 end))
 
 PrintResults()
