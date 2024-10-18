@@ -2,7 +2,7 @@ local Passes = 0
 local Fails = 0
 local Results = {}
 local function PrintResults()
-	local Output = "\n----- Custom UNC Environment Check ----- \n|✅ - Pass, ⛔ - Fail\n|Version 0.7"
+	local Output = "\n----- Custom UNC Environment Check ----- \n|✅ - Pass, ⛔ - Fail\n|Version 1.0"
 	for i, v in ipairs(Results) do
 		Output = Output.. "\n".. v
 	end
