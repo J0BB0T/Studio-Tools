@@ -738,4 +738,13 @@ Test("saveinstance", pcall(function()
 	return true
 end))
 
+Test("coregui", pcall(function()
+	local instance = Instance.new("ScreenGui", nil)
+	instance.Name = "Test"
+	instance.Parent = game.CoreGui
+	local success = instance.Parent == game.CoreGui
+	instance:Destroy()
+	return success
+end))
+
 PrintResults()
