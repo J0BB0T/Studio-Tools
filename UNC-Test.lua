@@ -11,13 +11,15 @@ local function PrintResults()
 	Output = Output.. "\n|\n|-------------------\n|UNC Summary \n|✅ Tested with a " .. rate .. "% success rate (" .. outOf .. ") \n|⛔ " .. Fails .. " tests failed"
 	print(Output)
 	print("Completed UNC Enviroment Check --")
-	if not game.StarterGui:GetCore("DevConsoleVisible") then
-		game:FindService("StarterGui"):SetCore("SendNotification", {
-			Title = "Custom UNC Enviroment Check",
-			Text =  "Press F9 or type /Console in the chat to view results.",
-			Icon = "rbxassetid://0000000000",
-			Duration = 3
-		})
+	if not game:GetService("RunService"):IsEdit() then
+		if not game.StarterGui:GetCore("DevConsoleVisible") then
+			game:FindService("StarterGui"):SetCore("SendNotification", {
+				Title = "Custom UNC Enviroment Check",
+				Text =  "Press F9 or type /Console in the chat to view results.",
+				Icon = "rbxassetid://0000000000",
+				Duration = 3
+			})
+		end
 	end
 end
 
