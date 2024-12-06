@@ -363,6 +363,11 @@ Test("ListFiles", pcall(function()
 	return isfolder(folders[1])
 end))
 
+Test("makefile", pcall(function()
+	makefile(".tests/makefile.txt", "true")
+	return isfile(".tests/makefile.txt")
+end))
+
 Test("writefile", pcall(function()
 	writefile(".tests/writefile.txt", "true")
 	return isfile(".tests/writefile.txt")
