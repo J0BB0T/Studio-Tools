@@ -2,7 +2,7 @@ local Passes = 0
 local Fails = 0
 local Results = {}
 local function PrintResults()
-	local Output = "\n----- RealUNC Environment Check ----- \n|✅ - Pass, ⛔ - Fail\n|Version 1.0"
+	local Output = "\n----- RealUNC Environment Check ----- \n|✅ - Pass, ⛔ - Fail\n|Version 1.1"
 	for i, v in ipairs(Results) do
 		Output = Output.. "\n".. v
 	end
@@ -10,7 +10,7 @@ local function PrintResults()
 	local outOf = Passes .. " out of " .. (Passes + Fails)
 	Output = Output.. "\n|\n|-------------------\n|UNC Summary \n|✅ Tested with a " .. tostring(rate) .. "% success rate (" .. outOf .. ") \n|⛔ " .. Fails .. " tests failed"
 	print(Output)
-	print("Completed RealUNC Enviroment Check --")
+	print("Completed RealUNC Environment Check --")
 	if not game:GetService("RunService"):IsEdit() then
 		if not game.StarterGui:GetCore("DevConsoleVisible") then
 			game:FindService("StarterGui"):SetCore("SendNotification", {
@@ -732,8 +732,8 @@ end))
 
 Test("saveinstance", pcall(function()
 	local instance = Instance.new("Part", nil)
-	saveinstance(instance, ".tests/instance.txt")
-	delfile(".tests/instance.txt")
+	saveinstance(instance, ".tests/instance.rbxm")
+	delfile(".tests/instance.rbxm")
 	return true
 end))
 
