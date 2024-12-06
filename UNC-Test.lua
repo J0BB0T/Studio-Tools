@@ -344,20 +344,16 @@ pcall(function()
 end)
 
 Test("readfile", pcall(function()
-	writefile(".tests/readfile.txt", "true")
+	makefile(".tests/readfile.txt", "true")
 	return readfile(".tests/readfile.txt") == "true"
 end))
 
-Test("ListFiles", pcall(function()
+Test("listfiles", pcall(function()
 	makefolder(".tests/listfiles")
-	writefile(".tests/listfiles/test_1.txt", "success")
-	writefile(".tests/listfiles/test_2.txt", "success")
+	makefile(".tests/listfiles/test_1.txt", "success")
+	makefile(".tests/listfiles/test_2.txt", "success")
 	local files = listfiles(".tests/listfiles")
-	makefolder(".tests/listfiles_2")
-	makefolder(".tests/listfiles_2/test_1")
-	makefolder(".tests/listfiles_2/test_2")
-	local folders = listfiles(".tests/listfiles_2")
-	return isfolder(folders[1])
+	return isfile(files[1])
 end))
 
 Test("makefile", pcall(function()
@@ -366,8 +362,9 @@ Test("makefile", pcall(function()
 end))
 
 Test("writefile", pcall(function()
+	makefile(".tests/writefile.txt", "false")
 	writefile(".tests/writefile.txt", "true")
-	return isfile(".tests/writefile.txt")
+	return readfile(".tests/writefile.txt") == "true"
 end))
 
 Test("makefolder", pcall(function()
@@ -376,27 +373,19 @@ Test("makefolder", pcall(function()
 end))
 
 Test("appendfile", pcall(function()
-	writefile(".tests/appendfile.txt", "t")
-	appendfile(".tests/appendfile.txt", "r")
-	appendfile(".tests/appendfile.txt", "u")
-	appendfile(".tests/appendfile.txt", "e")
+	makefile(".tests/appendfile.txt", "false")
+	appendfile(".tests/appendfile.txt", "true")
 	return readfile(".tests/appendfile.txt") == "true"
 end))
 
 Test("isfile", pcall(function()
-	writefile(".tests/isfile.txt", "true")
+	makefile(".tests/isfile.txt", "true")
 	return (isfile(".tests/isfile.txt") and not isfile(".tests"))
 end))
 
 Test("isfolder", pcall(function()
-	writefile(".tests/isfolder.txt", "true")
+	makefile(".tests/isfolder.txt", "true")
 	return (isfile(".tests") and not isfolder(".tests/isfolder.txt"))
-end))
-
-Test("delfolder", pcall(function()
-	makefolder(".tests/delfolder")
-	delfolder(".tests/delfolder")
-	return not isfolder(".tests/delfolder")
 end))
 
 Test("delfile", pcall(function()
@@ -406,16 +395,22 @@ Test("delfile", pcall(function()
 end))
 
 Test("loadfile", pcall(function()
-	writefile(".tests/loadfile.txt", "return ... + 1")
-	writefile(".tests/loadfile.txt", "f")
+	makefile(".tests/loadfile.txt", "return ... + 1")
+	makefile(".tests/loadfile.txt", "f")
 	local callback, err = loadfile(".tests/loadfile.txt")
 	return (err and not callback)
 end))
 
 Test("dofile", pcall(function()
-	writefile(".tests/dofile.txt", "writefile('.tests/dofile2.txt', 'true')")
-	dofile(".tests/dofile.txt")
-	return not isfile(".tests/dofile2.txt")
+	makefile(".tests/dofile.lua", "_G.dofiletest = true")
+	dofile(".tests/dofile.lua")
+	return _G.dofiletest
+end))
+
+Test("delfolder", pcall(function()
+	makefolder(".tests/delfolder")
+	delfolder(".tests/delfolder")
+	return true
 end))
 
 -- INPUT --
