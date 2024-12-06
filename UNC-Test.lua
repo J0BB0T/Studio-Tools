@@ -2,7 +2,7 @@ local Passes = 0
 local Fails = 0
 local Results = {}
 local function PrintResults()
-	local Output = "\n----- Custom UNC Environment Check ----- \n|✅ - Pass, ⛔ - Fail\n|Version 1.0"
+	local Output = "\n----- RealUNC Environment Check ----- \n|✅ - Pass, ⛔ - Fail\n|Version 1.0"
 	for i, v in ipairs(Results) do
 		Output = Output.. "\n".. v
 	end
@@ -10,11 +10,11 @@ local function PrintResults()
 	local outOf = Passes .. " out of " .. (Passes + Fails)
 	Output = Output.. "\n|\n|-------------------\n|UNC Summary \n|✅ Tested with a " .. rate .. "% success rate (" .. outOf .. ") \n|⛔ " .. Fails .. " tests failed"
 	print(Output)
-	print("Completed UNC Enviroment Check --")
+	print("Completed RealUNC Enviroment Check --")
 	if not game:GetService("RunService"):IsEdit() then
 		if not game.StarterGui:GetCore("DevConsoleVisible") then
 			game:FindService("StarterGui"):SetCore("SendNotification", {
-				Title = "Custom UNC Enviroment Check",
+				Title = "RealUNC Enviroment Check",
 				Text =  "Press F9 or type /Console in the chat to view results.",
 				Icon = "rbxassetid://0000000000",
 				Duration = 3
