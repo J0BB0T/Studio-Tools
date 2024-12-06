@@ -339,7 +339,6 @@ table.insert(Results, "|\n|-- Filesystem --")
 
 pcall(function()
 	if isfolder and makefolder and delfolder then
-		delfolder(".tests")
 		makefolder(".tests")
 	end
 end)
