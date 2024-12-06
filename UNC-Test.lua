@@ -8,7 +8,7 @@ local function PrintResults()
 	end
 	local rate = math.round(Passes / (Passes + Fails) * 100)
 	local outOf = Passes .. " out of " .. (Passes + Fails)
-	Output = Output.. "\n|\n|-------------------\n|UNC Summary \n|✅ Tested with a " .. rate .. "% success rate (" .. outOf .. ") \n|⛔ " .. Fails .. " tests failed"
+	Output = Output.. "\n|\n|-------------------\n|UNC Summary \n|✅ Tested with a " .. rate / outOf .. "% success rate (" .. outOf .. ") \n|⛔ " .. Fails .. " tests failed"
 	print(Output)
 	print("Completed RealUNC Enviroment Check --")
 	if not game:GetService("RunService"):IsEdit() then
@@ -339,9 +339,7 @@ table.insert(Results, "|\n|-- Filesystem --")
 
 pcall(function()
 	if isfolder and makefolder and delfolder then
-		if isfolder(".tests") then
-			delfolder(".tests")
-		end
+		delfolder(".tests")
 		makefolder(".tests")
 	end
 end)
@@ -404,7 +402,7 @@ end))
 
 Test("delfile", pcall(function()
 	makefile(".tests/delfile.txt", "true")
-	delfile(".test/delfile.txt")
+	delfile(".tests/delfile.txt")
 	return not isfile(".tests/delfile.txt")
 end))
 
