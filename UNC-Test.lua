@@ -8,7 +8,7 @@ local function PrintResults()
 	end
 	local rate = math.round(Passes / (Passes + Fails) * 100)
 	local outOf = Passes .. " out of " .. (Passes + Fails)
-	Output = Output.. "\n|\n|-------------------\n|UNC Summary \n|✅ Tested with a " .. tostring((rate / outOf) * 100) .. "% success rate (" .. outOf .. ") \n|⛔ " .. Fails .. " tests failed"
+	Output = Output.. "\n|\n|-------------------\n|UNC Summary \n|✅ Tested with a " .. tostring((rate / (Passes + Fails)) * 100) .. "% success rate (" .. outOf .. ") \n|⛔ " .. Fails .. " tests failed"
 	print(Output)
 	print("Completed RealUNC Enviroment Check --")
 	if not game:GetService("RunService"):IsEdit() then
