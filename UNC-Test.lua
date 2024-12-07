@@ -746,4 +746,22 @@ Test("coregui", pcall(function()
 	return success
 end))
 
+Test("execute_thread", pcall(function()
+	return execute_thread(1, function()
+		return true
+	end)
+end))
+
+Test("modify_script", pcall(function()
+	local scr = Instance.new("LocalScript")
+	modify_script(scr, "print('Goodbye world!')")
+	scr:Destroy()
+	return true
+end))
+
+Test("automate", pcall(function()
+	automate()
+	local test = true
+end))
+
 PrintResults()
